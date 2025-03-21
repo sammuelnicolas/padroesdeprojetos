@@ -1,0 +1,95 @@
+from abc import ABC, abstractmethod
+
+class TarefaBase(ABC):
+    def __init__(self, descricao):
+        self._descricao = descricao
+        self._concluida = False
+    
+    @abstractmethod
+    def mostrar_info(self):
+        pass
+    
+    def marcar_concluida(self):
+        self._concluida = True
+    
+    def obter_descricao(self):
+        return self._descricao
+    
+    def esta_concluida(self):
+        return self._concluida
+
+class Tarefa(TarefaBase):
+    def mostrar_info(self):
+        status = "Concluída" if self.esta_concluida() else "Pendente"
+        return f"{self.obter_descricao()} - {status}"
+
+class GerenciadorTarefas:
+    def __init__(self):
+        self._tarefas = []
+    
+    def adicionar_tarefa(self, descricao):
+        if descricao.strip():
+            self._tarefas.append(Tarefa(descricao))
+            print("Tarefa adicionada com sucesso!")
+        else:
+            print("Descrição inválida! Não pode ser vazia.")
+    
+    def listar_tarefas(self):
+        if not self._tarefas:
+            print("Nenhuma tarefa encontrada.")
+        else:
+            for i, tarefa in enumerate(self._tarefas, 1):
+                print(f"{i}. {tarefa.mostrar_info()}")
+    
+    def marcar_concluida(self, indice):
+        try:
+            self._tarefas[indice - 1].marcar_concluida()
+            print("Tarefa marcada como concluída!")
+        except (IndexError, ValueError):
+            print("Índice inválido!")
+    
+    def remover_tarefa(self, indice):
+        try:
+            del self._tarefas[indice - 1]
+            print("Tarefa removida com sucesso!")
+        except (IndexError, ValueError):
+            print("Índice inválido!")
+
+def main():
+    gerenciador = GerenciadorTarefas()
+    
+    while True:
+        print("\nMenu:")
+        print("1. Adicionar Tarefa")
+        print("2. Listar Tarefas")
+        print("3. Marcar Tarefa como Concluída")
+        print("4. Remover Tarefa")
+        print("5. Sair")
+        
+        opcao = input("Escolha uma opção: ")
+        
+        if opcao == "1":
+            descricao = input("Digite a descrição da tarefa: ")
+            gerenciador.adicionar_tarefa(descricao)
+        elif opcao == "2":
+            gerenciador.listar_tarefas()
+        elif opcao == "3":
+            try:
+                indice = int(input("Digite o número da tarefa a ser concluída: "))
+                gerenciador.marcar_concluida(indice)
+            except ValueError:
+                print("Por favor, insira um número válido.")
+        elif opcao == "4":
+            try:
+                indice = int(input("Digite o número da tarefa a ser removida: "))
+                gerenciador.remover_tarefa(indice)
+            except ValueError:
+                print("Por favor, insira um número válido.")
+        elif opcao == "5":
+            print("Saindo... Até mais!")
+            break
+        else:
+            print("Opção inválida! Tente novamente.")
+
+if __name__ == "__main__":
+    main()
